@@ -1,0 +1,160 @@
+#include <stdio.h>
+#include <vector.h>
+#include <bubble_sort.h>
+#include <stdlib.h>
+#include <stdio_ext.h>
+#define NULL_CHECK(vector)			\
+	if (vector == NULL)			\
+		return -1
+
+enum inserting {
+	APPEND = 1,
+	PREPEND,
+	INSERT,
+	SET
+};
+
+static int get_int(void)
+{
+	int temp = -1;
+	
+	while (1) {
+		scanf("%d", &temp);
+		__fpurge(stdin);
+		if (temp != -1)
+			return temp;
+		printf("Invaild data\nEnter again:\t");
+		continue;
+	}
+
+	return 0;
+}
+
+int display(struct vector_node *element)
+{
+	NULL_CHECK(element);
+	printf("%d  ",  VALUE(element));
+	return 0;	
+}
+
+int inserting(struct vector *vector, struct vector_node *data)
+{
+	int data_type = 0;
+	int opr =  0;
+	int location = 0;
+	int check = 0;
+
+	NULL_CHECK(data);
+	NULL_CHECK(vector);
+	printf("\n\n1.Appened\t2.Prepend\t3.Inserting\t4.set\n");
+	printf("Select the operation:\t");	
+	opr = get_int();
+	data_type = 2;
+	data->element.field_type = 2;
+	while (1) {
+		printf("Enter the data to pass:\t");
+		switch(data_type - 1) {
+		case CHAR:
+			check = scanf("%c",  &VALUE(data));
+			break;
+		case SHORT:
+			check = scanf("%hd", &VALUE(data));
+			break;
+		case INT:
+			check = scanf("%d",  &VALUE(data));
+			break;
+		case LONG:
+			check = scanf("%ld",  &VALUE(data));
+			break;
+		case FLOAT:
+			check = scanf("%f",  &VALUE_F(data));
+			break;
+		case DOUBLE:
+			check = scanf("%lf",  &VALUE_D(data));
+			break;
+		}		
+		__fpurge(stdin);
+		if (check == 1)
+			break;
+		printf("Invalid data\n");
+	}
+	if (opr == 3 || opr == 4) {		
+		printf("Enter location in vector\n");
+		location = get_int();
+	}
+	switch (opr) {
+	case APPEND:
+		if (vector->append(vector, data->element))
+			printf("Not possible to appened\n");
+		break;
+	case PREPEND:
+		if (vector->prepend(vector, data->element))
+			printf("Not possible to prepend data\n");
+		break;
+	case INSERT:
+		if (vector->insert(vector, location, data->element))
+			printf("Not possible to insert data at location %d", location);
+		break;
+	case SET:
+		if (vector->set(vector, location, data->element))
+			printf("Not possible to set at that location %d\n", location);
+		break;
+	}
+
+	return 0;	
+}
+
+int pass(struct vector *vector)
+{
+	int count = vector->size(vector);
+	struct vector *temp;	
+	printf("count = %d\n", count);	
+	int location = 1;
+	int pass = 1;
+
+	printf("in\n");
+	struct vector_node *path = vector->head;
+	count--;
+	while (count) {
+		count--;		
+		if (VALUE(path).int_g >  VALUE(path->next).int_g) {
+			vector->move(vector, pass, (pass + 1));
+		}
+		pass++;
+		path = vector->head;		
+		while (pass != location) {
+			path = path->next;
+			location++;
+		}
+		location = 1;			
+	}
+	printf("\nin2\n");	
+	return 0;
+}
+
+int main()
+{
+	struct vector *list = malloc(sizeof(struct vector));
+	struct vector *temp;
+	struct vector_node element;
+	int count = 0;
+	
+	vector(list);
+	printf("Enter the total number of count\n");
+	scanf("%d", &count);
+	while (count--) {
+		temp = list;
+		for_each(tmp, temp)
+			display(tmp);
+		inserting(list, &element);
+	}
+	count = list->size(list);
+	printf("count = %d\n", count);
+	while (count--){	
+		pass(list);
+	}
+	temp = list;
+	for_each(tmp, temp)
+		display(tmp);		
+	return 0;
+}

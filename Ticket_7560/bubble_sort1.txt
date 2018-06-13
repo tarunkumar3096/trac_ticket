@@ -1,0 +1,1 @@
+int pass(struct vector *vector);
